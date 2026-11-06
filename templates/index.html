@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bộ Thủ Hán Ngữ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">中</span><span>Bộ Thủ</span></div>
+    <nav>
+      <button class="nav-item active" data-view="home"><span>⌂</span> Tổng quan</button>
+      <button class="nav-item" data-view="flashcards"><span>▣</span> Flashcards</button>
+      <button class="nav-item" data-view="game"><span>◎</span> Trò chơi ghép</button>
+      <button class="nav-item" data-view="quiz"><span>✓</span> Kiểm tra</button>
+    </nav>
+    <div class="progress-card">
+      <div class="progress-head"><span>Tiến độ hôm nay</span><strong id="today-percent">0%</strong></div>
+      <div class="progress-track"><div id="today-bar"></div></div>
+      <small><span id="learned-count">0</span>/50 bộ thủ</small>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <button class="menu-button" id="menu-button">☰</button>
+      <div>
+        <p class="eyebrow" id="header-eyebrow">Chào buổi sáng!</p>
+        <h1 id="header-title">Tiếp tục hành trình</h1>
+      </div>
+      <button class="avatar" title="Hồ sơ">AN</button>
+    </header>
+
+    <section id="home-view" class="view active">
+      <div class="hero">
+        <div>
+          <span class="hero-tag">ĐANG HỌC</span>
+          <h2>50 bộ thủ cơ bản</h2>
+          <p>Mỗi bộ thủ là một mảnh ghép giúp bạn đọc và nhớ chữ Hán dễ hơn.</p>
+        </div>
+        <div class="hero-art"><span>大</span><small>Đại · lớn</small></div>
+      </div>
+
+      <div class="stats">
+        <div><span class="stat-icon red">火</span><div><strong id="streak">3</strong><small>Ngày liên tiếp</small></div></div>
+        <div><span class="stat-icon gold">✓</span><div><strong id="mastered">0</strong><small>Đã thành thạo</small></div></div>
+        <div><span class="stat-icon green">◎</span><div><strong id="accuracy">0%</strong><small>Độ chính xác</small></div></div>
+      </div>
+
+      <div class="section-head">
+        <div><h2>Bộ thủ nổi bật</h2><p>Bắt đầu từ những bộ thủ phổ biến nhất</p></div>
+        <button class="text-button" data-view-link="flashcards">Xem tất cả →</button>
+      </div>
+      <div class="radical-grid" id="featured-grid"></div>
+    </section>
+
+    <section id="flashcards-view" class="view">
+      <div class="flash-layout">
+        <div>
+          <p class="eyebrow">Thẻ học số <span id="card-position">1</span>/50</p>
+          <div class="flashcard" id="flashcard">
+            <div class="flash-front">
+              <span class="stroke-badge">BỘ THỦ</span>
+              <div class="stroke-writer" id="stroke-writer"></div>
+              <button class="stroke-button" id="stroke-button" type="button">Xem thứ tự nét</button>
+              <p>Nhấn thẻ để xem nghĩa</p>
+            </div>
+            <div class="flash-back">
+              <div class="big-radical small" id="card-char-back">人</div>
+              <h2 id="card-name">Nhân</h2>
+              <p id="card-meaning">Người</p>
+              <div class="examples" id="card-examples">今 · 他 · 他</div>
+            </div>
+          </div>
+          <div class="card-controls">
+            <button id="prev-card">← Trước</button>
+            <button class="mark-button" id="mark-mastered">Đánh dấu đã thuộc</button>
+            <button id="next-card">Tiếp →</button>
+          </div>
+        </div>
+        <aside class="card-list-panel">
+          <div class="section-head compact"><div><h2>Danh sách</h2></div></div>
+          <div id="card-list"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="game-view" class="view">
+      <div class="game-shell">
+        <div class="game-top"><div><p class="eyebrow">THỬ THÁCH GHÉP ĐÔI</p><h2>Tìm nghĩa của bộ thủ</h2></div><div class="score">Điểm <strong id="game-score">0</strong></div></div>
+        <div class="game-columns">
+          <div><p>Nghĩa tiếng Việt</p><div id="game-meanings" class="game-options"></div></div>
+          <div><p>Bộ thủ</p><div id="game-radicals" class="game-options"></div></div>
+        </div>
+        <div class="game-result" id="game-result"></div>
+      </div>
+    </section>
+
+    <section id="quiz-view" class="view">
+      <div class="quiz-shell">
+        <div class="quiz-top"><p class="eyebrow">KIỂM TRA NHANH</p><span id="quiz-counter">Câu 1/10</span></div>
+        <div class="question-progress"><div id="question-bar"></div></div>
+        <h2 id="quiz-question">Bộ thủ nào có nghĩa là "Người"?</h2>
+        <div id="quiz-options" class="quiz-options"></div>
+        <button id="quiz-next" class="quiz-next" disabled>Câu tiếp theo →</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
