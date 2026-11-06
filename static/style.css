@@ -38,6 +38,15 @@ header h1 { margin:3px 0 0; font-family:"Noto Serif SC",serif; font-size:25px; }
 .section-head h2 { margin:0; font-family:"Noto Serif SC",serif; font-size:21px; }.section-head p{margin:4px 0 0;color:var(--muted)}
 .text-button { border:0; background:transparent; color:var(--red); font-weight:700; cursor:pointer; }
 .radical-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; }
+.radical-group-grid { display:grid; grid-template-columns:repeat(2,minmax(280px,1fr)); gap:16px; }
+.radical-group-card { border:1px solid #e7e1d6; border-radius:14px; background:#fff; padding:20px; cursor:pointer; transition:.2s; }
+.radical-group-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(65,60,50,.08); }
+.group-card-top { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.group-icon { width:46px; height:46px; border-radius:12px; display:grid; place-items:center; background:#f3ead4; color:var(--red); font-family:"Noto Serif SC",serif; font-size:24px; }
+.group-card-top h2 { margin:0; font-family:"Noto Serif SC",serif; font-size:19px; }
+.group-card-top small { color:var(--muted); }
+.group-radicals { display:flex; flex-wrap:wrap; gap:7px; }
+.group-radical { min-width:42px; height:42px; border-radius:8px; background:#f7f4ed; display:grid; place-items:center; font-family:"Noto Serif SC",serif; font-size:21px; }
 .radical-card { min-height:150px; background:#fff; border:1px solid #ebe6dc; border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:.2s; }
 .radical-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(65,60,50,.08); }
 .radical-card .char { font-family:"Noto Serif SC",serif; font-size:48px; line-height:58px; }.radical-card strong{display:block;font-size:14px}.radical-card small{color:var(--muted)}
@@ -57,3 +66,4 @@ header h1 { margin:3px 0 0; font-family:"Noto Serif SC",serif; font-size:25px; }
 .quiz-shell { max-width:650px; }.quiz-top{font-weight:700}.question-progress{margin:14px 0 40px}.quiz-shell h2{font-family:"Noto Serif SC",serif;text-align:center;font-size:28px;min-height:68px}.quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.quiz-option{height:80px;border:1px solid #e3ddd1;border-radius:12px;background:white;font-family:"Noto Serif SC",serif;font-size:42px;cursor:pointer}.quiz-option.correct{background:#edf4e8;border-color:#7e9b69}.quiz-option.wrong{background:#f8e9e5;border-color:#c84a32}.quiz-next{display:block;margin:20px 0 0 auto;background:var(--red);color:white;border-color:var(--red)}.quiz-next:disabled{opacity:.45}
 @media(max-width:900px){.sidebar{transform:translateX(-100%);transition:.2s}.sidebar.open{transform:translateX(0)}main{margin-left:0;width:100%}.menu-button{display:block;margin-right:14px}header{padding:20px 24px;height:96px}.view{padding:24px}.radical-grid{grid-template-columns:repeat(3,1fr)}.flash-layout{grid-template-columns:1fr}.card-list-panel{display:none}.stats{grid-template-columns:1fr}}
 @media(max-width:600px){header h1{font-size:19px}.hero{padding:28px;min-height:250px}.hero-art{display:none}.radical-grid{grid-template-columns:repeat(2,1fr)}.stats>div{height:74px}.flashcard{height:330px}.big-radical{font-size:110px}.game-columns,.quiz-options{grid-template-columns:1fr}.game-shell,.quiz-shell{padding:18px}.game-options button{height:58px}.quiz-option{height:68px}}
+@media(max-width:900px){.radical-group-grid{grid-template-columns:1fr}}

@@ -57,6 +57,44 @@ let quizIndex = 0, quizScore = 0, quizAnswered = false;
 let quizQuestions = [];
 let gameSelected = null, gameScore = 0, gameMatched = 0;
 let strokeWriter = null;
+let activeStudyRadicals = radicals;
+
+const radicalGroups = [
+  {id:1,name:"Nhóm con người",icon:"人",items:[
+    {char:"亻",name:"Nhân",meaning:"Người"},{char:"女",name:"Nữ",meaning:"Phụ nữ"},
+    {char:"手",name:"Thủ",meaning:"Tay"},{char:"足",name:"Túc",meaning:"Chân"},
+    {char:"口",name:"Khẩu",meaning:"Miệng"},{char:"頁",name:"Hiệt",meaning:"Đầu"},
+    {char:"心",name:"Tâm",meaning:"Trái tim"},{char:"父",name:"Phụ",meaning:"Cha"},
+    {char:"目",name:"Mục",meaning:"Mắt"}]},
+  {id:2,name:"Nhóm tự nhiên",icon:"☀",items:[
+    {char:"金",name:"Kim",meaning:"Kim loại"},{char:"木",name:"Mộc",meaning:"Cây"},
+    {char:"水",name:"Thủy",meaning:"Nước"},{char:"火",name:"Hỏa",meaning:"Lửa"},
+    {char:"土",name:"Thổ",meaning:"Đất"},{char:"日",name:"Nhật",meaning:"Mặt trời"},
+    {char:"月",name:"Nguyệt",meaning:"Mặt trăng"}]},
+  {id:3,name:"Nhóm động vật và thực vật",icon:"鳥",items:[
+    {char:"鳥",name:"Điểu",meaning:"Chim"},{char:"犬",name:"Khuyển",meaning:"Chó"},
+    {char:"馬",name:"Mã",meaning:"Ngựa"},{char:"艹",name:"Thảo",meaning:"Cỏ"},
+    {char:"竹",name:"Trúc",meaning:"Tre"},{char:"虫",name:"Trùng",meaning:"Côn trùng"},
+    {char:"禾",name:"Hòa",meaning:"Lúa"},{char:"魚",name:"Ngư",meaning:"Cá"},
+    {char:"牛",name:"Ngưu",meaning:"Trâu/bò"}]},
+  {id:4,name:"Nhóm vật chất, đời sống",icon:"石",items:[
+    {char:"石",name:"Thạch",meaning:"Đá"},{char:"玉",name:"Ngọc",meaning:"Ngọc"},
+    {char:"米",name:"Mễ",meaning:"Gạo"},{char:"肉",name:"Nhục",meaning:"Thịt"},
+    {char:"門",name:"Môn",meaning:"Cửa"},{char:"車",name:"Xa",meaning:"Xe"},
+    {char:"衣",name:"Y",meaning:"Áo"},{char:"貝",name:"Bối",meaning:"Tiền"}]},
+  {id:5,name:"Nhóm công cụ",icon:"刀",items:[
+    {char:"刀",name:"Đao",meaning:"Dao"},{char:"巾",name:"Cân",meaning:"Khăn"},
+    {char:"尺",name:"Xích",meaning:"Thước"},{char:"糸",name:"Mịch",meaning:"Sợi"}]},
+  {id:6,name:"Nhóm không gian",icon:"山",items:[
+    {char:"山",name:"Sơn",meaning:"Núi"},{char:"田",name:"Điền",meaning:"Ruộng"},
+    {char:"阝",name:"Ấp",meaning:"Làng"},{char:"广",name:"Quảng",meaning:"Mái rộng"},
+    {char:"宀",name:"Miên",meaning:"Mái nhà"}]},
+  {id:7,name:"Nhóm khái niệm",icon:"力",items:[
+    {char:"力",name:"Lực",meaning:"Sức"},{char:"攴",name:"Phộc",meaning:"Đánh"},
+    {char:"辶",name:"Quai xước",meaning:"Đi"},{char:"雨",name:"Vũ",meaning:"Mưa"},
+    {char:"言",name:"Ngôn",meaning:"Lời nói"},{char:"食",name:"Thực",meaning:"Ăn"},
+    {char:"囗",name:"Vi",meaning:"Bao quanh"}]}
+];
 
 function updateStats(){
   document.getElementById("mastered").textContent = mastered.size;
@@ -68,7 +106,7 @@ function switchView(name){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.getElementById(name+"-view").classList.add("active");
   document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.view===name));
-  const titles={home:["Chào buổi sáng!","Tiếp tục hành trình"],flashcards:["THƯ VIỆN 50 BỘ THỦ","Học với flashcards"],game:["LUYỆN TẬP","Ghép bộ thủ - nghĩa"],quiz:["KIỂM TRA","Thử thách 10 câu"]};
+  const titles={home:["Chào buổi sáng!","Tiếp tục hành trình"],flashcards:["THƯ VIỆN BỘ THỦ","Học với flashcards"],groups:["HỌC THEO CHỦ ĐỀ","Các nhóm bộ thủ"],game:["LUYỆN TẬP","Ghép bộ thủ - nghĩa"],quiz:["KIỂM TRA","Thử thách 10 câu"]};
   document.getElementById("header-eyebrow").textContent=titles[name][0]; document.getElementById("header-title").textContent=titles[name][1];
   document.querySelector(".sidebar").classList.remove("open");
   if(name==="game") startGame();
@@ -80,11 +118,11 @@ document.getElementById("menu-button").onclick=()=>document.querySelector(".side
 
 const featured=[radicals[0],radicals[3],radicals[6],radicals[17],radicals[45]];
 document.getElementById("featured-grid").innerHTML=featured.map(r=>`<article class="radical-card" data-card="${r.id-1}"><div class="char">${r.char}</div><strong>${r.name}</strong><small>${r.meaning}</small></article>`).join("");
-document.querySelectorAll(".radical-card").forEach(c=>c.onclick=()=>{cardIndex=+c.dataset.card;renderCard();switchView("flashcards")});
+document.querySelectorAll(".radical-card").forEach(c=>c.onclick=()=>{activeStudyRadicals=radicals;cardIndex=+c.dataset.card;renderCard();switchView("flashcards")});
 
 function renderCard(){
-  const r=radicals[cardIndex];
-  document.getElementById("card-position").textContent=cardIndex+1;
+  const r=activeStudyRadicals[cardIndex];
+  document.getElementById("card-position").textContent=`${cardIndex+1}/${activeStudyRadicals.length}`;
   ["card-char-back"].forEach(id=>{
     const element=document.getElementById(id);
     if(element) element.textContent=r.char;
@@ -101,7 +139,7 @@ function renderCard(){
     });
     strokeWriter.animateCharacter();
   }
-  document.getElementById("card-list").innerHTML=radicals.map((x,i)=>`<button class="list-item" data-index="${i}"><span class="mini">${x.char}</span><strong>${x.name}</strong><small>${mastered.has(x.id)?"✓":x.id}</small></button>`).join("");
+  document.getElementById("card-list").innerHTML=activeStudyRadicals.map((x,i)=>`<button class="list-item" data-index="${i}"><span class="mini">${x.char}</span><strong>${x.name}</strong><small>${mastered.has(x.id || x.char)?"✓":x.name}</small></button>`).join("");
   document.querySelectorAll(".list-item").forEach(b=>b.onclick=()=>{cardIndex=+b.dataset.index;renderCard()});
 }
 document.getElementById("flashcard").onclick=()=>document.getElementById("flashcard").classList.toggle("flipped");
@@ -109,11 +147,35 @@ document.getElementById("stroke-button").onclick=(event)=>{
   event.stopPropagation();
   if(strokeWriter) strokeWriter.animateCharacter();
 };
-document.getElementById("prev-card").onclick=()=>{cardIndex=(cardIndex+49)%50;renderCard()};
-document.getElementById("next-card").onclick=()=>{cardIndex=(cardIndex+1)%50;renderCard()};
+document.getElementById("prev-card").onclick=()=>{cardIndex=(cardIndex+activeStudyRadicals.length-1)%activeStudyRadicals.length;renderCard()};
+document.getElementById("next-card").onclick=()=>{cardIndex=(cardIndex+1)%activeStudyRadicals.length;renderCard()};
 document.getElementById("mark-mastered").onclick=()=>{
-  mastered.add(radicals[cardIndex].id);localStorage.setItem("mastered",JSON.stringify([...mastered]));updateStats();renderCard();
+  const r=activeStudyRadicals[cardIndex];
+  mastered.add(r.id || r.char);localStorage.setItem("mastered",JSON.stringify([...mastered]));updateStats();renderCard();
 };
+
+function renderRadicalGroups(){
+  document.getElementById("radical-group-grid").innerHTML=radicalGroups.map(group=>`
+    <article class="radical-group-card" data-group="${group.id}">
+      <div class="group-card-top">
+        <div class="group-icon">${group.icon}</div>
+        <div><h2>${group.name}</h2><small>${group.items.length} bộ thủ</small></div>
+      </div>
+      <div class="group-radicals">
+        ${group.items.map(item=>`<span class="group-radical" title="${item.name} - ${item.meaning}">${item.char}</span>`).join("")}
+      </div>
+    </article>
+  `).join("");
+  document.querySelectorAll(".radical-group-card").forEach(card=>{
+    card.onclick=()=>{
+      const group=radicalGroups.find(item=>item.id===Number(card.dataset.group));
+      activeStudyRadicals=group.items.map(item=>({...item, examples:""}));
+      cardIndex=0;
+      renderCard();
+      switchView("flashcards");
+    };
+  });
+}
 
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function startGame(){
@@ -162,4 +224,4 @@ document.getElementById("quiz-next").onclick=()=>{
   if(quizIndex>=quizQuestions.length){startQuiz();return}
   quizIndex++;renderQuiz();
 };
-renderCard();updateStats();
+renderRadicalGroups();renderCard();updateStats();
