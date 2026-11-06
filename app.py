@@ -53,43 +53,19 @@ RADICALS = [
     {"id":48,"char":"馬","name":"Mã","meaning":"Con ngựa","examples":"妈, 骂, 骑","pinyin":"mǎ"},
     {"id":49,"char":"魚","name":"Ngư","meaning":"Con cá","examples":"鲁, 魸","pinyin":"yú"},
     {"id":50,"char":"鳥","name":"Điểu","meaning":"Con chim","examples":"鳦","pinyin":"niǎo"},
+    {"id":51,"char":"父","name":"Phụ","meaning":"Cha","examples":"爸, 父亲, 爷爷","pinyin":"fù"},
+    {"id":52,"char":"月","name":"Nguyệt","meaning":"Mặt trăng","examples":"明, 朋, 期","pinyin":"yuè"},
+    {"id":53,"char":"尺","name":"Xích","meaning":"Thước","examples":"尽, 尺寸, 尺子","pinyin":"chǐ"},
 ]
 
 RADICAL_GROUPS = [
-    {"id":1,"name":"Nhóm con người","icon":"人","items":[
-        {"char":"亻","name":"Nhân","meaning":"Người"},{"char":"女","name":"Nữ","meaning":"Phụ nữ"},
-        {"char":"手","name":"Thủ","meaning":"Tay"},{"char":"足","name":"Túc","meaning":"Chân"},
-        {"char":"口","name":"Khẩu","meaning":"Miệng"},{"char":"頁","name":"Hiệt","meaning":"Đầu"},
-        {"char":"心","name":"Tâm","meaning":"Trái tim"},{"char":"父","name":"Phụ","meaning":"Cha"},
-        {"char":"目","name":"Mục","meaning":"Mắt"}]},
-    {"id":2,"name":"Nhóm tự nhiên","icon":"☀","items":[
-        {"char":"金","name":"Kim","meaning":"Kim loại"},{"char":"木","name":"Mộc","meaning":"Cây"},
-        {"char":"水","name":"Thủy","meaning":"Nước"},{"char":"火","name":"Hỏa","meaning":"Lửa"},
-        {"char":"土","name":"Thổ","meaning":"Đất"},{"char":"日","name":"Nhật","meaning":"Mặt trời"},
-        {"char":"月","name":"Nguyệt","meaning":"Mặt trăng"}]},
-    {"id":3,"name":"Nhóm động vật và thực vật","icon":"鳥","items":[
-        {"char":"鳥","name":"Điểu","meaning":"Chim"},{"char":"犬","name":"Khuyển","meaning":"Chó"},
-        {"char":"馬","name":"Mã","meaning":"Ngựa"},{"char":"艹","name":"Thảo","meaning":"Cỏ"},
-        {"char":"竹","name":"Trúc","meaning":"Tre"},{"char":"虫","name":"Trùng","meaning":"Côn trùng"},
-        {"char":"禾","name":"Hòa","meaning":"Lúa"},{"char":"魚","name":"Ngư","meaning":"Cá"},
-        {"char":"牛","name":"Ngưu","meaning":"Trâu/bò"}]},
-    {"id":4,"name":"Nhóm vật chất, đời sống","icon":"石","items":[
-        {"char":"石","name":"Thạch","meaning":"Đá"},{"char":"玉","name":"Ngọc","meaning":"Ngọc"},
-        {"char":"米","name":"Mễ","meaning":"Gạo"},{"char":"肉","name":"Nhục","meaning":"Thịt"},
-        {"char":"門","name":"Môn","meaning":"Cửa"},{"char":"車","name":"Xa","meaning":"Xe"},
-        {"char":"衣","name":"Y","meaning":"Áo"},{"char":"貝","name":"Bối","meaning":"Tiền"}]},
-    {"id":5,"name":"Nhóm công cụ","icon":"刀","items":[
-        {"char":"刀","name":"Đao","meaning":"Dao"},{"char":"巾","name":"Cân","meaning":"Khăn"},
-        {"char":"尺","name":"Xích","meaning":"Thước"},{"char":"糸","name":"Mịch","meaning":"Sợi"}]},
-    {"id":6,"name":"Nhóm không gian","icon":"山","items":[
-        {"char":"山","name":"Sơn","meaning":"Núi"},{"char":"田","name":"Điền","meaning":"Ruộng"},
-        {"char":"阝","name":"Ấp","meaning":"Làng"},{"char":"广","name":"Quảng","meaning":"Mái rộng"},
-        {"char":"宀","name":"Miên","meaning":"Mái nhà"}]},
-    {"id":7,"name":"Nhóm khái niệm","icon":"力","items":[
-        {"char":"力","name":"Lực","meaning":"Sức"},{"char":"攴","name":"Phộc","meaning":"Đánh"},
-        {"char":"辶","name":"Quai xước","meaning":"Đi"},{"char":"雨","name":"Vũ","meaning":"Mưa"},
-        {"char":"言","name":"Ngôn","meaning":"Lời nói"},{"char":"食","name":"Thực","meaning":"Ăn"},
-        {"char":"囗","name":"Vi","meaning":"Bao quanh"}]}
+    {"id":1,"name":"Nhóm con người","icon":"人","radical_ids":[1,8,15,38,4,46,14,51,26]},
+    {"id":2,"name":"Nhóm tự nhiên","icon":"☀","radical_ids":[42,18,19,20,6,17,52]},
+    {"id":3,"name":"Nhóm động vật và thực vật","icon":"鳥","radical_ids":[50,22,48,33,29,34,28,49,21]},
+    {"id":4,"name":"Nhóm vật chất, đời sống","icon":"石","radical_ids":[27,23,30,32,43,39,35,37]},
+    {"id":5,"name":"Nhóm công cụ","icon":"刀","radical_ids":[2,11,53,31]},
+    {"id":6,"name":"Nhóm không gian","icon":"山","radical_ids":[10,24,41,12,9]},
+    {"id":7,"name":"Nhóm khái niệm","icon":"力","radical_ids":[3,16,40,45,36,47,5]},
 ]
 
 @app.route("/")
@@ -102,7 +78,21 @@ def get_radicals():
 
 @app.route("/api/radical-groups")
 def get_radical_groups():
-    return jsonify(RADICAL_GROUPS)
+    radicals_by_id = {radical["id"]: radical for radical in RADICALS}
+    groups = []
+    for group in RADICAL_GROUPS:
+        items = [
+            radicals_by_id[radical_id]
+            for radical_id in group["radical_ids"]
+            if radical_id in radicals_by_id
+        ]
+        groups.append({
+            "id": group["id"],
+            "name": group["name"],
+            "icon": group["icon"],
+            "items": items,
+        })
+    return jsonify(groups)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=4000)

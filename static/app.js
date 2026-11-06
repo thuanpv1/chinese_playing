@@ -58,43 +58,7 @@ let quizQuestions = [];
 let gameSelected = null, gameScore = 0, gameMatched = 0;
 let strokeWriter = null;
 let activeStudyRadicals = radicals;
-
-const radicalGroups = [
-  {id:1,name:"Nhóm con người",icon:"人",items:[
-    {char:"亻",name:"Nhân",meaning:"Người"},{char:"女",name:"Nữ",meaning:"Phụ nữ"},
-    {char:"手",name:"Thủ",meaning:"Tay"},{char:"足",name:"Túc",meaning:"Chân"},
-    {char:"口",name:"Khẩu",meaning:"Miệng"},{char:"頁",name:"Hiệt",meaning:"Đầu"},
-    {char:"心",name:"Tâm",meaning:"Trái tim"},{char:"父",name:"Phụ",meaning:"Cha"},
-    {char:"目",name:"Mục",meaning:"Mắt"}]},
-  {id:2,name:"Nhóm tự nhiên",icon:"☀",items:[
-    {char:"金",name:"Kim",meaning:"Kim loại"},{char:"木",name:"Mộc",meaning:"Cây"},
-    {char:"水",name:"Thủy",meaning:"Nước"},{char:"火",name:"Hỏa",meaning:"Lửa"},
-    {char:"土",name:"Thổ",meaning:"Đất"},{char:"日",name:"Nhật",meaning:"Mặt trời"},
-    {char:"月",name:"Nguyệt",meaning:"Mặt trăng"}]},
-  {id:3,name:"Nhóm động vật và thực vật",icon:"鳥",items:[
-    {char:"鳥",name:"Điểu",meaning:"Chim"},{char:"犬",name:"Khuyển",meaning:"Chó"},
-    {char:"馬",name:"Mã",meaning:"Ngựa"},{char:"艹",name:"Thảo",meaning:"Cỏ"},
-    {char:"竹",name:"Trúc",meaning:"Tre"},{char:"虫",name:"Trùng",meaning:"Côn trùng"},
-    {char:"禾",name:"Hòa",meaning:"Lúa"},{char:"魚",name:"Ngư",meaning:"Cá"},
-    {char:"牛",name:"Ngưu",meaning:"Trâu/bò"}]},
-  {id:4,name:"Nhóm vật chất, đời sống",icon:"石",items:[
-    {char:"石",name:"Thạch",meaning:"Đá"},{char:"玉",name:"Ngọc",meaning:"Ngọc"},
-    {char:"米",name:"Mễ",meaning:"Gạo"},{char:"肉",name:"Nhục",meaning:"Thịt"},
-    {char:"門",name:"Môn",meaning:"Cửa"},{char:"車",name:"Xa",meaning:"Xe"},
-    {char:"衣",name:"Y",meaning:"Áo"},{char:"貝",name:"Bối",meaning:"Tiền"}]},
-  {id:5,name:"Nhóm công cụ",icon:"刀",items:[
-    {char:"刀",name:"Đao",meaning:"Dao"},{char:"巾",name:"Cân",meaning:"Khăn"},
-    {char:"尺",name:"Xích",meaning:"Thước"},{char:"糸",name:"Mịch",meaning:"Sợi"}]},
-  {id:6,name:"Nhóm không gian",icon:"山",items:[
-    {char:"山",name:"Sơn",meaning:"Núi"},{char:"田",name:"Điền",meaning:"Ruộng"},
-    {char:"阝",name:"Ấp",meaning:"Làng"},{char:"广",name:"Quảng",meaning:"Mái rộng"},
-    {char:"宀",name:"Miên",meaning:"Mái nhà"}]},
-  {id:7,name:"Nhóm khái niệm",icon:"力",items:[
-    {char:"力",name:"Lực",meaning:"Sức"},{char:"攴",name:"Phộc",meaning:"Đánh"},
-    {char:"辶",name:"Quai xước",meaning:"Đi"},{char:"雨",name:"Vũ",meaning:"Mưa"},
-    {char:"言",name:"Ngôn",meaning:"Lời nói"},{char:"食",name:"Thực",meaning:"Ăn"},
-    {char:"囗",name:"Vi",meaning:"Bao quanh"}]}
-];
+let radicalGroups = [];
 
 function updateStats(){
   document.getElementById("mastered").textContent = mastered.size;
@@ -169,7 +133,7 @@ function renderRadicalGroups(){
   document.querySelectorAll(".radical-group-card").forEach(card=>{
     card.onclick=()=>{
       const group=radicalGroups.find(item=>item.id===Number(card.dataset.group));
-      activeStudyRadicals=group.items.map(item=>({...item, examples:""}));
+       activeStudyRadicals=group.items;
       cardIndex=0;
       renderCard();
       switchView("flashcards");
@@ -224,4 +188,12 @@ document.getElementById("quiz-next").onclick=()=>{
   if(quizIndex>=quizQuestions.length){startQuiz();return}
   quizIndex++;renderQuiz();
 };
-renderRadicalGroups();renderCard();updateStats();
+async function loadRadicalGroups(){
+ const response=await fetch("/api/radical-groups");
+ if(!response.ok) throw new Error("Không thể tải danh sách nhóm bộ thủ");
+ radicalGroups=await response.json();
+ renderRadicalGroups();
+}
+
+loadRadicalGroups().catch(error=>console.error(error));
+renderCard();updateStats();
